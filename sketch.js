@@ -3,14 +3,15 @@
 // - Hold and release the left mouse button to launch the ball away from the mouse.
 // - Spacebar pauses/unpauses the game.
 // - Enter moves the ball to a random location that is not touching the pit.
-
+console.log("IAT 806 — W2: variables, draw loop, conditionals, random");
 let ballX = 80;
 let ballY = 66;
 let ballsize = 20;
 let pitX = 50;
 let pitY = 50;
 let pitSize = 20;
-
+let targetImage = null;
+let campusImage = null;
 let targetX = 20;
 let targetY = 20;
 let targetSize = 40;
@@ -25,6 +26,12 @@ let hit = false;
 
 function setup() {
   createCanvas(800, 800);
+  loadImage("proffhead.jpg", (loadedImage) => {
+    targetImage = loadedImage;
+  });
+  loadImage("surreycampus.jpg", (loadedImage) => {
+    campusImage = loadedImage;
+  });
   let rPit = pitSize / 2;
 
   pitX = random(rPit, width - rPit);
@@ -32,7 +39,35 @@ function setup() {
 }
 
 function draw() {
-  background(1);
+  if (campusImage) {
+    let sourceX = 0;
+    let sourceY = 0;
+    let sourceWidth = campusImage.width;
+    let sourceHeight = campusImage.height;
+    let canvasRatio = width / height;
+
+    if (sourceWidth / sourceHeight > canvasRatio) {
+      sourceWidth = sourceHeight * canvasRatio;
+      sourceX = (campusImage.width - sourceWidth) / 2;
+    } else {
+      sourceHeight = sourceWidth / canvasRatio;
+      sourceY = (campusImage.height - sourceHeight) / 2;
+    }
+
+    image(
+      campusImage,
+      0,
+      0,
+      width,
+      height,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+    );
+  } else {
+    background(1);
+  }
 
   let rBall = ballsize / 2;
   let rPit = pitSize / 2;
@@ -104,7 +139,7 @@ function draw() {
   circle(ballX, ballY, ballsize);
 
   // Draw the moving pit.
-  fill(180);
+  fill(255, 0, 0);
   circle(pitX, pitY, pitSize);
 
   //draw pause text
@@ -137,8 +172,35 @@ function draw() {
   }
 
   // Draw the target square.
-  fill(255, 34, 90);
-  rect(targetX, targetY, targetSize, targetSize);
+  if (targetImage) {
+    let sourceX = 0;
+    let sourceY = 0;
+    let sourceWidth = targetImage.width;
+    let sourceHeight = targetImage.height;
+
+    if (sourceWidth > sourceHeight) {
+      sourceX = (sourceWidth - sourceHeight) / 2;
+      sourceWidth = sourceHeight;
+    } else {
+      sourceY = (sourceHeight - sourceWidth) / 2;
+      sourceHeight = sourceWidth;
+    }
+
+    image(
+      targetImage,
+      targetX - targetSize / 2,
+      targetY - targetSize / 2,
+      targetSize * 2,
+      targetSize * 2,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+    );
+  } else {
+    fill(255, 34, 90);
+    rect(targetX, targetY, targetSize, targetSize);
+  }
 
   // Draw the level .
   fill(255);
